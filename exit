@@ -1,0 +1,214 @@
+Help on package PIL:
+
+NNAAMMEE
+    PIL - Pillow (Fork of the Python Imaging Library)
+
+DDEESSCCRRIIPPTTIIOONN
+    Pillow is the friendly PIL fork by Alex Clark and Contributors.
+        https://github.com/python-pillow/Pillow/
+    
+    Pillow is forked from PIL 1.1.7.
+    
+    PIL is the Python Imaging Library by Fredrik Lundh and Contributors.
+    Copyright (c) 1999 by Secret Labs AB.
+    
+    Use PIL.__version__ for this Pillow version.
+    
+    ;-)
+
+PPAACCKKAAGGEE  CCOONNTTEENNTTSS
+    BdfFontFile
+    BlpImagePlugin
+    BmpImagePlugin
+    BufrStubImagePlugin
+    ContainerIO
+    CurImagePlugin
+    DcxImagePlugin
+    DdsImagePlugin
+    EpsImagePlugin
+    ExifTags
+    FitsStubImagePlugin
+    FliImagePlugin
+    FontFile
+    FpxImagePlugin
+    FtexImagePlugin
+    GbrImagePlugin
+    GdImageFile
+    GifImagePlugin
+    GimpGradientFile
+    GimpPaletteFile
+    GribStubImagePlugin
+    Hdf5StubImagePlugin
+    IcnsImagePlugin
+    IcoImagePlugin
+    ImImagePlugin
+    Image
+    ImageChops
+    ImageCms
+    ImageColor
+    ImageDraw
+    ImageDraw2
+    ImageEnhance
+    ImageFile
+    ImageFilter
+    ImageFont
+    ImageGrab
+    ImageMath
+    ImageMode
+    ImageMorph
+    ImageOps
+    ImagePalette
+    ImagePath
+    ImageQt
+    ImageSequence
+    ImageShow
+    ImageStat
+    ImageTransform
+    ImageWin
+    ImtImagePlugin
+    IptcImagePlugin
+    Jpeg2KImagePlugin
+    JpegImagePlugin
+    JpegPresets
+    McIdasImagePlugin
+    MicImagePlugin
+    MpegImagePlugin
+    MpoImagePlugin
+    MspImagePlugin
+    PSDraw
+    PaletteFile
+    PalmImagePlugin
+    PcdImagePlugin
+    PcfFontFile
+    PcxImagePlugin
+    PdfImagePlugin
+    PdfParser
+    PixarImagePlugin
+    PngImagePlugin
+    PpmImagePlugin
+    PsdImagePlugin
+    PyAccess
+    SgiImagePlugin
+    SpiderImagePlugin
+    SunImagePlugin
+    TarIO
+    TgaImagePlugin
+    TiffImagePlugin
+    TiffTags
+    WalImageFile
+    WebPImagePlugin
+    WmfImagePlugin
+    XVThumbImagePlugin
+    XbmImagePlugin
+    XpmImagePlugin
+    __main__
+    _binary
+    _imaging
+    _imagingcms
+    _imagingft
+    _imagingmath
+    _imagingmorph
+    _tkinter_finder
+    _util
+    _version
+    _webp
+    features
+
+CCLLAASSSSEESS
+    builtins.OSError(builtins.Exception)
+        UnidentifiedImageError
+    
+    class UUnniiddeennttiiffiieeddIImmaaggeeEErrrroorr(builtins.OSError)
+     |  Raised in :py:meth:`PIL.Image.open` if an image cannot be opened and identified.
+     |  
+     |  Method resolution order:
+     |      UnidentifiedImageError
+     |      builtins.OSError
+     |      builtins.Exception
+     |      builtins.BaseException
+     |      builtins.object
+     |  
+     |  Data descriptors defined here:
+     |  
+     |  ____wweeaakkrreeff____
+     |      list of weak references to the object (if defined)
+     |  
+     |  ----------------------------------------------------------------------
+     |  Methods inherited from builtins.OSError:
+     |  
+     |  ____iinniitt____(self, /, *args, **kwargs)
+     |      Initialize self.  See help(type(self)) for accurate signature.
+     |  
+     |  ____rreedduuccee____(...)
+     |      Helper for pickle.
+     |  
+     |  ____ssttrr____(self, /)
+     |      Return str(self).
+     |  
+     |  ----------------------------------------------------------------------
+     |  Static methods inherited from builtins.OSError:
+     |  
+     |  ____nneeww____(*args, **kwargs) from builtins.type
+     |      Create and return a new object.  See help(type) for accurate signature.
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data descriptors inherited from builtins.OSError:
+     |  
+     |  cchhaarraacctteerrss__wwrriitttteenn
+     |  
+     |  eerrrrnnoo
+     |      POSIX exception code
+     |  
+     |  ffiilleennaammee
+     |      exception filename
+     |  
+     |  ffiilleennaammee22
+     |      second exception filename
+     |  
+     |  ssttrreerrrroorr
+     |      exception strerror
+     |  
+     |  ----------------------------------------------------------------------
+     |  Methods inherited from builtins.BaseException:
+     |  
+     |  ____ddeellaattttrr____(self, name, /)
+     |      Implement delattr(self, name).
+     |  
+     |  ____ggeettaattttrriibbuuttee____(self, name, /)
+     |      Return getattr(self, name).
+     |  
+     |  ____rreepprr____(self, /)
+     |      Return repr(self).
+     |  
+     |  ____sseettaattttrr____(self, name, value, /)
+     |      Implement setattr(self, name, value).
+     |  
+     |  ____sseettssttaattee____(...)
+     |  
+     |  wwiitthh__ttrraacceebbaacckk(...)
+     |      Exception.with_traceback(tb) --
+     |      set self.__traceback__ to tb and return self.
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data descriptors inherited from builtins.BaseException:
+     |  
+     |  ____ccaauussee____
+     |      exception cause
+     |  
+     |  ____ccoonntteexxtt____
+     |      exception context
+     |  
+     |  ____ddiicctt____
+     |  
+     |  ____ssuupppprreessss__ccoonntteexxtt____
+     |  
+     |  ____ttrraacceebbaacckk____
+     |  
+     |  aarrggss
+
+VVEERRSSIIOONN
+    9.0.1
+
+FFIILLEE
+    /usr/lib/python3/dist-packages/PIL/__init__.py
+
