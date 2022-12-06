@@ -59,11 +59,15 @@ def change_dir(sender, app_data, user_data):
     if current_click - last_click < 5 and lask_clicked == app_data:
         if app_data in temp_dirs_display:
             ind = temp_dirs_display.index(app_data)
-            if temp_dirs[ind] == "..":
+            try:
+                if temp_dirs[ind] == "..":
+                    currentPath = "/".join(currentPath.split("/")[:-2]) + "/"
+                else:
+                    currentPath += temp_dirs[ind] + "/"
+                update_files()
+            except PermissionError:
                 currentPath = "/".join(currentPath.split("/")[:-2]) + "/"
-            else:
-                currentPath += temp_dirs[ind] + "/"
-            update_files()
+                update_files()
         else:
             ind = temp_files_display.index(app_data)
             if operatingSystem == "Windows":
@@ -87,13 +91,18 @@ def toggle_hidden(sender, app_data, user_data):
 
 def nav_home():
     global currentPath
-    currentPath = os.path.expanduser('~') + "/"
+    currentPath = os.path.expanduser('~').replace("\\", "/") + "/"
     update_files()
 
 def nav_root():
     global currentPath
     currentPath = "/"
     update_files()
+
+def pathChanged(sender, app_data, user_data):
+    print(dpg.is_item_active("currentPath"))
+    if not dpg.is_item_active("currentPath"):
+        print(app_data)
 
 last_click = 0
 lask_clicked = 0
@@ -109,7 +118,7 @@ dpg.create_context()
 dpg.create_viewport(title='File Explorer', width=1000, height=600)
 
 with dpg.window(tag="filesWindow", pos=(200, 100), width=800, height=500, label=(currentPath), no_title_bar=True, no_collapse=True, no_close=True, no_move=True):
-    dpg.add_text("/", tag="currentPath")
+    dpg.add_input_text(default_value="/", tag="currentPath", callback=pathChanged)
     dpg.add_text("Name" + " "*26 + "Size" + " "*26 + "Type" + " "*23 + "Last Modified")
     dpg.add_listbox(tag="filesBox", width=780, num_items=24, callback=change_dir)
 
