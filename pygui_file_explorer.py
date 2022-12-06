@@ -1,5 +1,5 @@
 import dearpygui.dearpygui as dpg
-import os, time, subprocess, platform
+import os, time, subprocess, platform, shutil, threading
 from datetime import datetime
 from os.path import join, isfile, getsize, getmtime
 
@@ -54,9 +54,9 @@ def format_file(filename: str):
     
 
 def change_dir(sender, app_data, user_data):
-    global currentPath, last_click, lask_clicked, temp_dirs, operatingSystem, temp_dirs_display
+    global currentPath, last_click, last_clicked, temp_dirs, operatingSystem, temp_dirs_display
     current_click = int(time.time())*1000
-    if current_click - last_click < 5 and lask_clicked == app_data:
+    if current_click - last_click < 5 and last_clicked == app_data:
         if app_data in temp_dirs_display:
             ind = temp_dirs_display.index(app_data)
             try:
@@ -68,6 +68,7 @@ def change_dir(sender, app_data, user_data):
             except PermissionError:
                 currentPath = "/".join(currentPath.split("/")[:-2]) + "/"
                 update_files()
+                show_error("Permission Denied")
         else:
             ind = temp_files_display.index(app_data)
             if operatingSystem == "Windows":
@@ -77,7 +78,7 @@ def change_dir(sender, app_data, user_data):
                 print("opening file")
                 subprocess.call(("xdg-open", join(currentPath, temp_files[ind])))
     last_click = current_click
-    lask_clicked = app_data
+    last_clicked = app_data
 
 def toggle_hidden(sender, app_data, user_data):
     global showHidden
@@ -100,12 +101,114 @@ def nav_root():
     update_files()
 
 def pathChanged(sender, app_data, user_data):
-    print(dpg.is_item_active("currentPath"))
-    if not dpg.is_item_active("currentPath"):
-        print(app_data)
+    global currentPath
+    try:
+        tempPath = dpg.get_value("currentPath")
+        if tempPath[-1] != "/":
+            tempPath += "/"
+        os.listdir(tempPath)
+        currentPath = tempPath
+        update_files()
+    except FileNotFoundError as e:
+        dpg.set_value("currentPath", currentPath)
+    except PermissionError:
+        show_error("Permission Denied")
+        dpg.set_value("currentPath", currentPath)
+
+
+def mkdir(sender, app_data, user_data):
+    def set_dir_to_make(sender, app_data, user_data):
+        global dir_to_make, currentPath
+        dir_to_make = dpg.get_value("dirName")
+        try:
+            os.mkdir(join(currentPath, dir_to_make))
+        except FileExistsError as e:
+            show_error("Directory already exists")
+        except Exception:
+            show_error("Bad directory name")
+        update_files()
+        dpg.delete_item("dialogueWindow")
+
+    with dpg.window(tag="dialogueWindow", pos=(400, 250), width=200, height=100, label="Enter Directory Name", no_collapse=True, no_move=True):
+        dpg.add_input_text(tag="dirName", hint="Directory Name", width=180, pos=(10, 50))
+    with dpg.item_handler_registry(tag="dialogue handler"):
+        dpg.add_item_deactivated_after_edit_handler(callback=set_dir_to_make)        
+    dpg.bind_item_handler_registry("dirName", "dialogue handler")
+
+def mkfile(sender, app_data, user_data):
+    def set_file_to_make(sender, app_data, user_data):
+        global currentPath
+        file_to_make = dpg.get_value("fileName")
+        try:
+            with open(file_to_make, "w") as f:
+                pass
+        except FileExistsError as e:
+            show_error("File already exists")
+        except Exception:
+            show_error("Bad file name")
+        update_files()
+        dpg.delete_item("dialogueWindow")
+
+    with dpg.window(tag="dialogueWindow", pos=(400, 250), width=200, height=100, label="Enter File Name", no_collapse=True, no_move=True):
+        dpg.add_input_text(tag="fileName", hint="File Name", width=180, pos=(10, 50))
+    with dpg.item_handler_registry(tag="dialogue handler2"):
+        dpg.add_item_deactivated_after_edit_handler(callback=set_file_to_make)        
+    dpg.bind_item_handler_registry("fileName", "dialogue handler2")
+
+
+def show_error(msg: str):
+    with dpg.window(tag="errorWindow", pos=(400, 250), width=200, height=100, label="Error", no_collapse=True, no_move=True):
+        dpg.add_text(tag="msg")
+    dpg.set_value("msg", msg)
+
+def delfile():
+    global last_clicked, currentPath, temp_files, temp_files_display, temp_dirs_display, temp_dirs
+    try:
+        if last_clicked in temp_files_display:
+            ind = temp_files_display.index(last_clicked)
+            os.remove(join(currentPath, temp_files[ind]))
+        elif last_clicked in temp_dirs_display:
+            ind = temp_dirs_display.index(last_clicked)
+            shutil.rmtree(join(currentPath, temp_dirs[ind]))
+        else:
+            show_error("No such file or directory")
+
+    except PermissionError:
+        show_error("Permission Denied")
+    update_files()
+
+def rename():
+    def set_new_name(sender, app_data, user_data):
+        global currentPath, last_clicked
+        new_name = dpg.get_value("fileName")
+        try:
+            if last_clicked in temp_files_display:
+                ind = temp_files_display.index(last_clicked)
+                os.replace(join(currentPath, temp_files[ind]), join(currentPath, new_name))
+            elif last_clicked in temp_dirs_display:
+                ind = temp_dirs_display.index(last_clicked)
+                os.replace(join(currentPath, temp_dirs[ind]), join(currentPath, new_name))
+        except PermissionError:
+            show_error("Permission Denied")
+        except Exception:
+            show_error("Bad file name")
+        update_files()
+        dpg.delete_item("dialogueWindow")
+
+    with dpg.window(tag="dialogueWindow", pos=(400, 250), width=200, height=100, label="Enter New Name", no_collapse=True, no_move=True):
+        dpg.add_input_text(tag="fileName", hint="New Name", width=180, pos=(10, 50))
+    with dpg.item_handler_registry(tag="dialogue handler2"):
+        dpg.add_item_deactivated_after_edit_handler(callback=set_new_name)        
+    dpg.bind_item_handler_registry("fileName", "dialogue handler2")
+
+def update_files_bg():
+    while True:
+        update_files()
+        time.sleep(1)
+    
 
 last_click = 0
-lask_clicked = 0
+last_clicked = 0
 currentPath = "/"
 showHidden = False
 temp_files = []
@@ -118,18 +221,29 @@ dpg.create_context()
 dpg.create_viewport(title='File Explorer', width=1000, height=600)
 
 with dpg.window(tag="filesWindow", pos=(200, 100), width=800, height=500, label=(currentPath), no_title_bar=True, no_collapse=True, no_close=True, no_move=True):
-    dpg.add_input_text(default_value="/", tag="currentPath", callback=pathChanged)
+    dpg.add_input_text(default_value="/", tag="currentPath", callback=None, width=780)
     dpg.add_text("Name" + " "*26 + "Size" + " "*26 + "Type" + " "*23 + "Last Modified")
     dpg.add_listbox(tag="filesBox", width=780, num_items=24, callback=change_dir)
 
 with dpg.window(tag="Settings Window", pos=(0, 0), width=1000, height=100, no_collapse=True, no_move=True, no_close=True, no_title_bar=True):
-    dpg.add_button(tag="hideFilesButton", label="Show hidden\n   files", callback=toggle_hidden, width=100, height=50)
+    dpg.add_button(tag="hideFilesButton", label="Show hidden\n   files", callback=toggle_hidden, width=100, height=50, pos=(10, 25))
+    dpg.add_button(tag="mkdir", label="  Create\nDirectory", width=100, height=50, pos=(120, 25), callback=mkdir)
+    dpg.add_button(tag="mkfile", label="Create\n File", width=100, height=50, pos=(230, 25), callback=mkfile)
+    dpg.add_button(tag="delfile", label=" Delete\nSelected", width=100, height=50, pos=(340, 25), callback=delfile)
+    dpg.add_button(tag="rename", label=" Rename\nSelected", width=100, height=50, pos=(450, 25), callback=rename)
 
 with dpg.window(tag="sideFrame", width=200, height=500, pos=(0, 100), no_collapse=True, no_move=True, no_close=True, no_title_bar=True):
     dpg.add_text("Quick Navigation")
     dpg.add_button(label="Root", callback=nav_root, width=180, height=20, pos=(10, 40))
     dpg.add_button(label="Home", callback=nav_home, width=180, height=20, pos=(10, 80))
 
+with dpg.item_handler_registry(tag="widget handler"):
+    dpg.add_item_deactivated_after_edit_handler(callback=pathChanged)
+
+t = threading.Thread(target=update_files_bg)
+t.daemon = True
+t.start()
+dpg.bind_item_handler_registry("currentPath", "widget handler")
 update_files()
 dpg.setup_dearpygui()
 dpg.show_viewport()
