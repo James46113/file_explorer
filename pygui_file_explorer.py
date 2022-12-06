@@ -242,7 +242,7 @@ with dpg.window(tag="sideFrame", width=200, height=500, pos=(0, 100), no_collaps
 
 with dpg.item_handler_registry(tag="widget handler"):
     dpg.add_item_deactivated_after_edit_handler(callback=pathChanged)
-    dpg.add_key_release_handler(key=dpg.mvKey_Delete)
+    dpg.add_key_press_handler(key=dpg.mvKey_Delete)
 
 t = threading.Thread(target=update_files_bg)
 t.daemon = True
